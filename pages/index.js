@@ -17,18 +17,23 @@ const ChannelName = ({ children, href }) => (
     href={href}
     target={href ? '_blank' : undefined}
     sx={{
-      fontWeight: 400,
+      fontWeight: 500,
       color: '#1264a3',
-      fontSize: '1.15rem',
+      fontSize: '1.1rem',
       backgroundColor: '#e8f5fa',
-      px: '0.3em',
+      border: '1px solid rgba(18, 100, 163, 0.1)',
+      px: '0.4em',
       py: '0.1em',
-      borderRadius: '4px',
+      borderRadius: '6px',
       textDecoration: 'none',
-      transition: 'background-color 0.15s ease',
+      display: 'inline-block',
+      lineHeight: '1.4',
+      transition: 'all 0.2s ease-in-out',
       ...(href && {
         '&:hover': {
-          backgroundColor: '#c9e5f2'
+          backgroundColor: '#c9e5f2',
+          transform: 'scale(1.05)',
+          boxShadow: '0 2px 8px rgba(18, 100, 163, 0.15)'
         }
       })
     }}
@@ -60,8 +65,8 @@ const GuideItem = ({ title, children, isOpen, onToggle }) => {
         onClick={handleClick}
         sx={{
           width: '100%',
-          py: '1rem',
-          px: 0,
+          py: '1.25rem',
+          px: '0.5rem',
           fontWeight: 600,
           fontSize: '1.5rem',
           color: 'steel',
@@ -73,8 +78,12 @@ const GuideItem = ({ title, children, isOpen, onToggle }) => {
           alignItems: 'center',
           fontFamily: 'inherit',
           textAlign: 'left',
-          transition: 'color 0.2s ease',
-          '&:hover': { color: 'primary' },
+          borderRadius: '8px',
+          transition: 'all 0.2s ease',
+          '&:hover': {
+            color: 'primary',
+            bg: 'rgba(236, 55, 80, 0.05)'
+          },
           '&:hover .guide-icon': { color: 'primary' }
         }}
       >
@@ -85,7 +94,8 @@ const GuideItem = ({ title, children, isOpen, onToggle }) => {
             fontSize: '1.5rem',
             fontWeight: 400,
             color: 'muted',
-            transition: 'color 0.2s ease'
+            transition: 'transform 0.3s ease, color 0.2s ease',
+            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)'
           }}
         >
           {isOpen ? '−' : '+'}
@@ -104,9 +114,11 @@ const GuideItem = ({ title, children, isOpen, onToggle }) => {
         <Box
           sx={{
             fontSize: '1.15rem',
-            pb: isOpen ? '1rem' : 0,
+            pb: isOpen ? '1.5rem' : 0,
+            pt: isOpen ? '0.5rem' : 0,
+            px: '0.5rem',
             transition: 'padding 0.3s ease',
-            '& p': { mb: '0.75rem', color: 'slate' },
+            '& p': { mb: '0.75rem', color: 'slate', lineHeight: '1.6' },
             '& p:last-child, & ul:last-child': { mb: 0 },
             '& ul': { pl: '1.5rem' },
             '& li': { mb: '0.5rem', color: 'slate' },
@@ -130,16 +142,88 @@ const Card = ({ children, sx, ...props }) => (
   <Box
     sx={{
       bg: 'white',
-      borderRadius: '12px',
-      p: '1.5rem',
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
-      transition: 'box-shadow 0.2s ease',
-      '&:hover': { boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)' },
+      borderRadius: '16px',
+      p: ['1.5rem', '2rem'],
+      boxShadow: 'card',
+      border: '1px solid',
+      borderColor: 'smoke',
+      borderTop: '6px solid',
+      borderTopColor: 'primary',
+      transition: 'all 0.25s ease-in-out',
+      '&:hover': {
+        boxShadow: 'elevated',
+        transform: 'translateY(-6px)'
+      },
       ...sx
     }}
     {...props}
   >
     {children}
+  </Box>
+)
+
+const TimelineItem = ({ version, date, children, isLast }) => (
+  <Box
+    as="article"
+    sx={{
+      display: 'flex',
+      gap: '1.5rem',
+      position: 'relative',
+      pb: isLast ? 0 : '2.5rem'
+    }}
+  >
+    {!isLast && (
+      <Box
+        sx={{
+          position: 'absolute',
+          left: '11px',
+          top: '24px',
+          bottom: 0,
+          width: '2px',
+          background: (t) =>
+            `linear-gradient(to bottom, ${t.colors.primary}, ${t.colors.orange})`,
+          zIndex: 0
+        }}
+      />
+    )}
+    <Box
+      sx={{
+        width: '24px',
+        height: '24px',
+        borderRadius: '50%',
+        bg: 'primary',
+        backgroundImage: 'radial-gradient(ellipse farthest-corner at top left, #ff8c37, #ec3750)',
+        border: '4px solid white',
+        boxShadow: '0 0 0 2px rgba(236, 55, 80, 0.2)',
+        flexShrink: 0,
+        zIndex: 1,
+        mt: '4px'
+      }}
+    />
+    <Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.75rem', mb: '0.5rem', flexWrap: 'wrap' }}>
+        <Text
+          sx={{
+            fontWeight: 700,
+            color: 'white',
+            bg: 'primary',
+            px: '0.6rem',
+            py: '0.1rem',
+            borderRadius: '20px',
+            fontSize: '0.85rem',
+            letterSpacing: '0.02em'
+          }}
+        >
+          {version}
+        </Text>
+        <Text sx={{ fontSize: '0.9rem', color: 'muted', fontWeight: 500 }}>
+          {date}
+        </Text>
+      </Box>
+      <Text sx={{ fontSize: '1.15rem', color: 'slate', lineHeight: '1.5' }}>
+        {children}
+      </Text>
+    </Box>
   </Box>
 )
 
@@ -150,12 +234,18 @@ const SlackPage = () => {
   const [countryChannel, setCountryChannel] = useState(null)
   const [stateChannel, setStateChannel] = useState(null)
   const [geoLoading, setGeoLoading] = useState(false)
+  const [geoError, setGeoError] = useState(null)
 
   const handleGeolocate = () => {
     setGeoLoading(true)
-    fetch('https://ipapi.co/json/')
-      .then((res) => res.json())
+    setGeoError(null)
+    fetch('/api/geo')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch location.')
+        return res.json()
+      })
       .then((data) => {
+        if (data.error) throw new Error(data.reason || 'Location lookup failed.')
         const country = (data.country_name || '')
           .toLowerCase()
           .replace(/[\s-]+/g, '-')
@@ -184,7 +274,9 @@ const SlackPage = () => {
           }
         }
       })
-      .catch(() => {})
+      .catch((err) => {
+        setGeoError(err.message)
+      })
       .finally(() => setGeoLoading(false))
   }
 
@@ -202,7 +294,15 @@ const SlackPage = () => {
   }, [])
 
   return (
-    <>
+    <Box
+      sx={{
+        backgroundImage: 'url(/pattern.svg)',
+        backgroundRepeat: 'repeat',
+        backgroundAttachment: 'fixed',
+        minHeight: '100vh',
+        backgroundColor: 'snow'
+      }}
+    >
       <Meta
         as={Head}
         name="Join our Slack"
@@ -219,17 +319,29 @@ const SlackPage = () => {
         sx={{
           display: 'grid',
           gridTemplateColumns: ['1fr', '1fr 1fr'],
-          gap: '1.5rem',
+          gap: ['2rem', '3rem'],
           maxWidth: '1200px',
           mx: 'auto',
-          p: ['1rem', '2rem']
+          p: ['1.5rem', '3rem'],
+          position: 'relative',
+          zIndex: 1
         }}
       >
         {/* Guide Section */}
         <Card sx={{ gridColumn: ['1', '1 / -1'] }}>
           <Heading
             as="h2"
-            sx={{ fontSize: '3rem', color: 'black', mb: '1rem' }}
+            sx={{
+              fontSize: ['2.5rem', '3.5rem'],
+              color: 'primary',
+              mb: '1.5rem',
+              lineHeight: 'tight',
+              fontWeight: 800,
+              backgroundImage: (t) => t.util.gx('orange', 'red'),
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              display: 'inline-block'
+            }}
           >
             New? Read this first!
           </Heading>
@@ -399,8 +511,21 @@ const SlackPage = () => {
         </Card>
 
         {/* Slack Highlights */}
-        <Card sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <Heading as="h2" sx={{ fontSize: '3rem', color: 'black', mb: 0 }}>
+        <Card sx={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <Heading
+            as="h2"
+            sx={{
+              fontSize: ['2.5rem', '3.5rem'],
+              color: 'primary',
+              mb: 0,
+              lineHeight: 'tight',
+              fontWeight: 800,
+              backgroundImage: (t) => t.util.gx('orange', 'red'),
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              display: 'inline-block'
+            }}
+          >
             Slack Highlights
           </Heading>
           {countryChannel ? (
@@ -424,46 +549,61 @@ const SlackPage = () => {
               )}
             </Text>
           ) : (
-            <Text
-              as="button"
-              onClick={handleGeolocate}
-              disabled={geoLoading}
-              sx={{
-                bg: 'red',
-                backgroundImage:
-                  'radial-gradient(ellipse farthest-corner at top left, #ff8c37, #ec3750)',
-                color: 'white',
-                fontSize: 2,
-                px: 4,
-                py: 3,
-                borderRadius: 'extra',
-                fontWeight: 'bold',
-                textDecoration: 'none',
-                display: 'inline-block',
-                position: 'relative',
-                overflow: 'hidden',
-                transition: 'transform 0.125s ease-in-out',
-                border: 'none',
-                cursor: geoLoading ? 'default' : 'pointer',
-                fontFamily: 'inherit',
-                opacity: geoLoading ? 0.7 : 1,
-                ':hover:not(:disabled)': {
-                  transform: 'scale(1.05)',
+            <Box>
+              <Text
+                as="button"
+                onClick={handleGeolocate}
+                disabled={geoLoading}
+                sx={{
+                  bg: 'red',
                   backgroundImage:
-                    'radial-gradient(ellipse farthest-corner at bottom right, #ff8c37, #ec3750)'
-                }
-              }}
-            >
-              {geoLoading ? (
-                'Looking up…'
-              ) : (
-                <>
-                  Find your regional channel
-                  <br />
-                  (shares your IP with geolocation service)
-                </>
+                    'radial-gradient(ellipse farthest-corner at top left, #ff8c37, #ec3750)',
+                  color: 'white',
+                  fontSize: 2,
+                  px: 4,
+                  py: 3,
+                  borderRadius: 'extra',
+                  fontWeight: 'bold',
+                  textDecoration: 'none',
+                  display: 'inline-block',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  transition: 'transform 0.125s ease-in-out',
+                  border: '2px solid white',
+                  cursor: geoLoading ? 'default' : 'pointer',
+                  fontFamily: 'inherit',
+                  opacity: geoLoading ? 0.7 : 1,
+                  ':hover:not(:disabled)': {
+                    transform: 'scale(1.05)',
+                    boxShadow: '0 0 0 2px white',
+                    backgroundImage:
+                      'radial-gradient(ellipse farthest-corner at bottom right, #ff8c37, #ec3750)'
+                  }
+                  }}
+                  >                {geoLoading ? (
+                  'Looking up…'
+                ) : (
+                  <>
+                    Find your regional channel
+                    <br />
+                    (shares your IP with geolocation service)
+                  </>
+                )}
+              </Text>
+              {geoError && (
+                <Text
+                  sx={{
+                    color: 'red',
+                    fontSize: 1,
+                    mt: 2,
+                    display: 'block',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {geoError}
+                </Text>
               )}
-            </Text>
+            </Box>
           )}
           <Text sx={{ fontSize: '1.15rem', color: 'slate' }}>
             Feel like sharing something random from your life? Check out{' '}
@@ -477,100 +617,55 @@ const SlackPage = () => {
         <Card>
           <Heading
             as="h2"
-            sx={{ fontSize: '3rem', color: 'black', mb: '1rem' }}
+            sx={{
+              fontSize: ['2.5rem', '3.5rem'],
+              color: 'primary',
+              mb: '2rem',
+              lineHeight: 'tight',
+              fontWeight: 800,
+              backgroundImage: (t) => t.util.gx('orange', 'red'),
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              display: 'inline-block'
+            }}
           >
             Changelog
           </Heading>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <Box
-              as="article"
-              sx={{
-                pl: '1rem',
-                borderLeft: '3px solid',
-                borderColor: 'primary'
-              }}
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <TimelineItem
+              version="v1.3.0"
+              date="March 16 2026"
             >
-              <Text
-                sx={{ fontWeight: 700, color: 'primary', fontSize: '0.9rem' }}
-              >
-                v1.3.0
-              </Text>
-              <Text sx={{ fontSize: '0.8rem', color: 'muted', ml: '0.5rem' }}>
-                March 16 2026
-              </Text>
-              <Text sx={{ ml: '0.5rem', fontSize: '1.15rem', color: 'slate' }}>
-                Country and US state channel suggestions based on your location
-              </Text>
-            </Box>
-            <Box
-              as="article"
-              sx={{
-                pl: '1rem',
-                borderLeft: '3px solid',
-                borderColor: 'primary'
-              }}
+              Country and US state channel suggestions based on your location
+            </TimelineItem>
+            <TimelineItem
+              version="v1.2.0"
+              date="March 10 2026"
             >
-              <Text
-                sx={{ fontWeight: 700, color: 'primary', fontSize: '0.9rem' }}
-              >
-                v1.2.0
-              </Text>
-              <Text sx={{ fontSize: '0.8rem', color: 'muted', ml: '0.5rem' }}>
-                March 10 2026
-              </Text>
-              <Text sx={{ ml: '0.5rem', fontSize: '1.15rem', color: 'slate' }}>
-                <ThemeLink href="https://news.hackclub.com">
-                  Slacker News
-                </ThemeLink>{' '}
-                and Prometheus launched
-              </Text>
-            </Box>
-            <Box
-              as="article"
-              sx={{
-                pl: '1rem',
-                borderLeft: '3px solid',
-                borderColor: 'primary'
-              }}
+              <ThemeLink href="https://news.hackclub.com">
+                Slacker News
+              </ThemeLink>{' '}
+              and Prometheus launched
+            </TimelineItem>
+            <TimelineItem
+              version="v1.1.0"
+              date="January 27 2026"
             >
-              <Text
-                sx={{ fontWeight: 700, color: 'primary', fontSize: '0.9rem' }}
-              >
-                v1.1.0
-              </Text>
-              <Text sx={{ fontSize: '0.8rem', color: 'muted', ml: '0.5rem' }}>
-                January 27 2026
-              </Text>
-              <Text sx={{ ml: '0.5rem', fontSize: '1.15rem', color: 'slate' }}>
-                slides added to onboarding flow
-              </Text>
-            </Box>
-            <Box
-              as="article"
-              sx={{
-                pl: '1rem',
-                borderLeft: '3px solid',
-                borderColor: 'primary'
-              }}
+              slides added to onboarding flow
+            </TimelineItem>
+            <TimelineItem
+              version="v1.0.0"
+              date="January 16 2026"
+              isLast
             >
-              <Text
-                sx={{ fontWeight: 700, color: 'primary', fontSize: '0.9rem' }}
-              >
-                v1.0.0
-              </Text>
-              <Text sx={{ fontSize: '0.8rem', color: 'muted', ml: '0.5rem' }}>
-                January 16 2026
-              </Text>
-              <Text sx={{ ml: '0.5rem', fontSize: '1.15rem', color: 'slate' }}>
-                slack.hackclub.com launched
-              </Text>
-            </Box>
+              slack.hackclub.com launched
+            </TimelineItem>
           </Box>
         </Card>
       </Box>
 
       <Footer />
-    </>
+    </Box>
   )
 }
 

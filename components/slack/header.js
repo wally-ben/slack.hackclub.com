@@ -1,5 +1,4 @@
 import { Box, Card, Grid, Heading, Text } from 'theme-ui'
-import SlideUp from '../slide-up'
 import usePrefersMotion from '../../lib/use-prefers-motion'
 import useHasMounted from '../../lib/use-has-mounted'
 
@@ -26,7 +25,7 @@ const Content = ({ onJoinClick }) => (
         Hack Club Slack
       </Heading>
     </Box>
-    <SlideUp sx={{ zIndex: 5, display: 'flex', alignItems: 'center' }}>
+    <Box sx={{ zIndex: 5, display: 'flex', alignItems: 'center' }}>
       <Card
         sx={{
           variant: 'cards.translucent',
@@ -65,12 +64,13 @@ const Content = ({ onJoinClick }) => (
               display: 'inline-block',
               position: 'relative',
               overflow: 'hidden',
-              transition: 'transform 0.125s ease-in-out',
-              border: 'none',
+              transition: 'all 0.125s ease-in-out',
+              border: '2px solid white',
               cursor: 'pointer',
               fontFamily: 'inherit',
               ':hover': {
                 transform: 'scale(1.05)',
+                boxShadow: '0 0 0 2px white',
                 backgroundImage:
                   'radial-gradient(ellipse farthest-corner at bottom right, #ff8c37, #ec3750)'
               }
@@ -80,7 +80,7 @@ const Content = ({ onJoinClick }) => (
           </Text>
         </Box>
       </Card>
-    </SlideUp>
+    </Box>
   </Grid>
 )
 
@@ -92,8 +92,8 @@ const Cover = () => (
       top: 0,
       left: 0,
       right: 0,
-      backgroundImage: (t) => t.util.gx('cyan', 'purple'),
-      opacity: 0.625,
+      backgroundImage: (t) => t.util.gx('orange', 'red'),
+      opacity: 0.85,
       zIndex: 1
     }}
   />
