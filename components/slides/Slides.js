@@ -58,13 +58,14 @@ const PrimaryButton = ({ children, onClick }) => (
       py: 3,
       borderRadius: 'extra',
       fontWeight: 'bold',
-      border: 'none',
+      border: '2px solid white',
       cursor: 'pointer',
-      transition: 'transform 0.125s ease-in-out',
+      transition: 'all 0.125s ease-in-out',
       width: BUTTON_MIN_WIDTH,
       textAlign: 'center',
       ':hover': {
         transform: 'scale(1.05)',
+        boxShadow: '0 0 0 2px white',
         backgroundImage:
           'radial-gradient(ellipse farthest-corner at bottom right, #ff8c37, #ec3750)'
       }
@@ -92,7 +93,8 @@ const SecondaryButton = ({ children, onClick }) => (
       width: BUTTON_MIN_WIDTH,
       textAlign: 'center',
       ':hover': {
-        bg: 'rgba(255,255,255,0.1)',
+        bg: 'white',
+        color: 'red',
         transform: 'scale(1.05)'
       }
     }}
@@ -301,7 +303,7 @@ const DownSlideContent = ({ slide, onUp, conductData }) => {
     >
       <Box
         sx={{
-          backgroundImage: (t) => t.util.gx('cyan', 'purple'),
+          backgroundImage: (t) => t.util.gx('orange', 'red'),
           height: '15vh',
           minHeight: '80px',
           display: 'flex',
@@ -535,7 +537,7 @@ const Slides = ({ isOpen, onClose }) => {
           sx={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: (t) => t.util.gx('cyan', 'purple'),
+            backgroundImage: (t) => t.util.gx('orange', 'red'),
             zIndex: 0
           }}
         />
