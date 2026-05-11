@@ -1,10 +1,35 @@
 import geoip from 'geoip-lite'
 import countries from 'i18n-iso-countries'
+import ct from 'countries-and-timezones'
 
 // Register the languages we need
 countries.registerLocale(require('i18n-iso-countries/langs/en.json'))
 
 export default async function handler(req, res) {
+  const timezone = req.query.timezone
+
+  if (typeof timezone === 'string' && timezone) {
+    try {
+      const country = ct.getCountryForTimezone(timezone)
+
+      if (!country) {
+        return res.status(404).json({ error: 'Location not found for this timezone' })
+      }
+
+      const countryName = countries.getName(country.id, 'en')
+
+      return res.status(200).json({
+        country_name: countryName || country.name,
+        country_code: country.id,
+        region: null,
+        city: null
+      })
+    } catch (error) {
+      console.error('Browser timezone geolocation error:', error)
+      return res.status(500).json({ error: 'Failed to resolve browser timezone' })
+    }
+  }
+
   // Extract client IP from headers
   let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || ''
   

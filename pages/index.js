@@ -236,48 +236,112 @@ const SlackPage = () => {
   const [geoLoading, setGeoLoading] = useState(false)
   const [geoError, setGeoError] = useState(null)
 
-  const handleGeolocate = () => {
+  const applyCountryChannel = (countryName, countryCode, regionName = null) => {
+    if (!countryName) return false
+
+    const country = countryName.toLowerCase().replace(/[\s-]+/g, '-')
+    const countryMatch = channels.find(
+      (c) =>
+        c.type === 'country' &&
+        (country.includes(c.match) || c.match.includes(country))
+    )
+
+    if (!countryMatch) return false
+
+    setCountryChannel({
+      name: countryName,
+      code: countryCode,
+      channel: countryMatch
+    })
+
+    if (countryCode === 'US' && regionName) {
+      const region = regionName.toLowerCase().replace(/[\s-]+/g, '-')
+      const stateMatch = channels.find(
+        (c) =>
+          c.type === 'us-state' &&
+          (region.includes(c.match) || c.match.includes(region))
+      )
+
+      if (stateMatch) {
+        setStateChannel({ name: regionName, channel: stateMatch })
+      }
+    }
+
+    return true
+  }
+
+  const getBrowserTimezone = () => {
+    if (typeof window === 'undefined') return null
+
+    return window.Intl?.DateTimeFormat?.().resolvedOptions?.().timeZone || null
+  }
+
+  const lookupLocation = async (url) => {
+    const res = await fetch(url)
+
+    if (!res.ok) {
+      throw new Error('Location lookup failed.')
+    }
+
+    const data = await res.json()
+
+    if (data.error) {
+      throw new Error(data.reason || data.error || 'Location lookup failed.')
+    }
+
+    const matched = applyCountryChannel(
+      data.country_name,
+      data.country_code,
+      data.region
+    )
+
+    if (!matched) {
+      throw new Error('Location lookup failed.')
+    }
+
+    return matched
+  }
+
+  const lookupIpLocation = () => lookupLocation('/api/geo')
+
+  const lookupBrowserLocation = async () => {
+    const timezone = getBrowserTimezone()
+
+    if (!timezone) {
+      throw new Error('Your browser does not expose a timezone.')
+    }
+
+    return lookupLocation(`/api/geo?timezone=${encodeURIComponent(timezone)}`)
+  }
+
+  const handleGeolocate = async () => {
     setGeoLoading(true)
     setGeoError(null)
-    fetch('/api/geo')
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch location.')
-        return res.json()
-      })
-      .then((data) => {
-        if (data.error) throw new Error(data.reason || 'Location lookup failed.')
-        const country = (data.country_name || '')
-          .toLowerCase()
-          .replace(/[\s-]+/g, '-')
-        const countryMatch = channels.find(
-          (c) =>
-            c.type === 'country' &&
-            (country.includes(c.match) || c.match.includes(country))
-        )
-        if (countryMatch) {
-          setCountryChannel({
-            name: data.country_name,
-            code: data.country_code,
-            channel: countryMatch
-          })
-        }
+    const isLocalhost =
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname === '::1'
 
-        if (data.country_code === 'US' && data.region) {
-          const region = data.region.toLowerCase().replace(/[\s-]+/g, '-')
-          const stateMatch = channels.find(
-            (c) =>
-              c.type === 'us-state' &&
-              (region.includes(c.match) || c.match.includes(region))
-          )
-          if (stateMatch) {
-            setStateChannel({ name: data.region, channel: stateMatch })
-          }
+    try {
+      await lookupBrowserLocation()
+    } catch (browserError) {
+      if (!isLocalhost) {
+        try {
+          await lookupIpLocation()
+          return
+        } catch {
+          // Fall through to the browser error below.
         }
-      })
-      .catch((err) => {
-        setGeoError(err.message)
-      })
-      .finally(() => setGeoLoading(false))
+      }
+
+      setGeoError(
+        browserError.message === 'Browser geolocation is unavailable.'
+          ? 'Your browser does not expose location data.'
+          : browserError.message
+      )
+    } finally {
+      setGeoLoading(false)
+    }
   }
 
   const handleGuideToggle = (index) => {
@@ -584,9 +648,9 @@ const SlackPage = () => {
                   'Looking up…'
                 ) : (
                   <>
-                    Find your regional channel
+                      Find your regional channel
                     <br />
-                    (shares your IP with geolocation service)
+                      (uses your browser timezone when available)
                   </>
                 )}
               </Text>
