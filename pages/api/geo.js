@@ -13,16 +13,8 @@ export default async function handler(req, res) {
     ip = ip.split(',')[0].trim()
   }
 
-  // Handle local development
+  // Reject requests where we still cannot determine a usable client IP.
   if (!ip || ip === '::1' || ip === '127.0.0.1' || ip.startsWith('192.168.') || ip.startsWith('10.')) {
-    if (process.env.NODE_ENV === 'development') {
-      return res.status(200).json({
-        country_name: 'United States',
-        country_code: 'US',
-        region: 'CA',
-        city: 'Los Angeles'
-      })
-    }
     return res.status(400).json({ error: 'Could not determine client IP' })
   }
 
