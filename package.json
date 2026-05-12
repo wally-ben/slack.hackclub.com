@@ -17,7 +17,7 @@
     "@hackclub/theme": "^1.1.0",
     "@mdx-js/react": "^3.1.1",
     "countries-and-timezones": "^3.9.0",
-    "geoip-lite": "^1.4.10",
+    "geoip-lite": "^2.0.2",
     "i18n-iso-countries": "^7.14.0",
     "lodash": "^4.17.23",
     "next": "^16.2.6",
