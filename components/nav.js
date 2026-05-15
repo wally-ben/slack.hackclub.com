@@ -21,8 +21,8 @@ const fixed = (props) =>
     border-bottom: 1px solid rgba(48, 48, 48, 0.125);
     @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
       background-color: ${props.transparent
-      ? 'transparent'
-      : rgbaBgColor(props, 0.75)};
+        ? 'transparent'
+        : rgbaBgColor(props, 0.75)};
       -webkit-backdrop-filter: saturate(180%) blur(20px);
       backdrop-filter: saturate(180%) blur(20px);
     }
@@ -55,7 +55,7 @@ const hoverColor = (name) =>
     white: 'smoke',
     smoke: 'muted',
     muted: 'slate',
-    slate: 'black',
+    slate: 'white',
     black: 'slate',
     primary: 'error'
   })[name] || 'black'
@@ -112,8 +112,12 @@ const NavBar = styled(Box, {
     margin-left: ${theme.space[1]}px;
     padding: ${theme.space[3]}px;
     text-decoration: none;
-    color: white;
+    color: ${(props) =>
+      props.scrolled ? theme.colors.slate : theme.colors.white};
     transition: color 0.2s ease;
+  }
+  a:hover {
+    color: #ec3750;
   }
 `
 
@@ -202,6 +206,7 @@ function Header({ unfixed, color, bgColor, dark, fixed, ...props }) {
           aria-hidden={!!mobile}
           color={baseColor}
           dark={dark}
+          scrolled={scrolled}
         />
         <ToggleContainer color={toggleColor} onClick={handleToggleMenu}>
           <Icon glyph={toggled ? 'view-close' : 'menu'} />
@@ -214,6 +219,7 @@ function Header({ unfixed, color, bgColor, dark, fixed, ...props }) {
         toggled={toggled}
         color={baseColor}
         dark={dark}
+        scrolled={scrolled}
       />
       {toggled && <style>{`body { overflow: hidden; }`}</style>}
     </Root>

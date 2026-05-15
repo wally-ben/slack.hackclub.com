@@ -1,3 +1,4 @@
+/** @jsxImportSource theme-ui */
 import Meta from '@hackclub/meta'
 import Head from 'next/head'
 import { Box, Heading, Text, Link as ThemeLink } from 'theme-ui'
@@ -162,6 +163,32 @@ const Card = ({ children, sx, ...props }) => (
   </Box>
 )
 
+const MakeFigure = (props) => {
+  const imgUrl = props.imgUrl
+  const imgDesc = props.imgDesc
+  return (
+    <figure
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.5rem'
+      }}
+    >
+      <img
+        src={imgUrl}
+        alt={imgDesc}
+        loading="lazy"
+        sx={{
+          height: '22.5rem'
+        }}
+      />
+      <figcaption>{imgDesc}</figcaption>
+    </figure>
+  )
+}
+
 const TimelineItem = ({ version, date, children, isLast }) => (
   <Box
     as="article"
@@ -192,7 +219,8 @@ const TimelineItem = ({ version, date, children, isLast }) => (
         height: '24px',
         borderRadius: '50%',
         bg: 'primary',
-        backgroundImage: 'radial-gradient(ellipse farthest-corner at top left, #ff8c37, #ec3750)',
+        backgroundImage:
+          'radial-gradient(ellipse farthest-corner at top left, #ff8c37, #ec3750)',
         border: '4px solid white',
         boxShadow: '0 0 0 2px rgba(236, 55, 80, 0.2)',
         flexShrink: 0,
@@ -201,7 +229,15 @@ const TimelineItem = ({ version, date, children, isLast }) => (
       }}
     />
     <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.75rem', mb: '0.5rem', flexWrap: 'wrap' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+          mb: '0.5rem',
+          flexWrap: 'wrap'
+        }}
+      >
         <Text
           sx={{
             fontWeight: 700,
@@ -420,31 +456,80 @@ const SlackPage = () => {
               there is so much happening. We care about you, and wrote this
               guide to help you.
             </p>
-            <p>
-              <strong>Channels:</strong>The best place to meet new people and
-              have interesting conversations. When you want to talk about
-              something, you find the channel with other people who want to talk
-              about it, or if that channel doesn&apos;t exist, you make your
-              own!
-            </p>
-            <p>
-              <strong>DMs:</strong> You can also DM individual users or groups
-              of users. This is another way to connect with members of our
-              community!
-            </p>
-            <p>
-              <strong>Search:</strong> The search bar at the top of your Slack
-              is how you find channels to join, find people to DM, and look up
-              messages. It has so many hidden functions; for example you can
-              search in a specific channel or DM for a specific message on a
-              specific day!
-            </p>
-            <p>
-              <strong>The Sidebar:</strong> Once you join a channel or start a
-              DM, it lives in your sidebar. You can play around and reorganize
-              it in the way that makes sense to you.
-            </p>
-
+            <div>
+              <Heading as="h3">Channels</Heading>
+              <p>
+                The best place to meet new people and have interesting
+                conversations. When you want to talk about something, you find
+                the channel with other people who want to talk about it, or if
+                that channel doesn&apos;t exist, you make your own!
+              </p>
+              <MakeFigure
+                imgUrl="slack-channel.gif"
+                imgDesc="A GIF showing channels in Slack"
+              />
+            </div>
+            <div>
+              <Heading as="h3">DMs</Heading>
+              <p>
+                You can also DM individual users or groups of users. This is
+                another way to connect with members of our community!
+              </p>
+              <MakeFigure
+                imgUrl="slack-dms.gif"
+                imgDesc="A GIF showing how the DMs section looks like in Slack"
+              />
+            </div>
+            <div>
+              <Heading as="h3">Search</Heading>
+              <p>
+                The search bar at the top of your Slack is how you find channels
+                to join, find people to DM, and look up messages. It has so many
+                hidden functions; for example you can search in a specific
+                channel or DM for a specific message on a specific day!
+              </p>
+              <MakeFigure
+                imgUrl="slack-search.gif"
+                imgDesc="A GIF showing the search bar in Slack"
+              />
+            </div>
+            <div>
+              <Heading as="h3">The Sidebar</Heading>
+              <p>
+                Once you join a channel or start a DM, it lives in your sidebar.
+                You can play around and reorganize it in the way that makes
+                sense to you.
+              </p>
+              <div
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  flexWrap: 'wrap'
+                }}
+              >
+                <MakeFigure
+                  imgUrl="default-slack-sidebar.png"
+                  imgDesc="How the Slack sidebar looks by default"
+                />
+                <MakeFigure
+                  imgUrl="slack-sidebar-small-icons.png"
+                  imgDesc="Slack sidebar with small icons enabled"
+                />
+                <MakeFigure
+                  imgUrl="slack-sidebar-all-items-enabled.png"
+                  imgDesc="Slack sidebar with all icons enabled"
+                />
+                <MakeFigure
+                  imgUrl="slack-sidebar-all-items-disabled.png"
+                  imgDesc="Slack sidebar with most icons disabled"
+                />
+                <MakeFigure
+                  imgUrl="slack-sidebar-preferences.png"
+                  imgDesc="Options for the slack sidebar"
+                />
+              </div>
+            </div>
           </GuideItem>
 
           <GuideItem
@@ -535,10 +620,10 @@ const SlackPage = () => {
                 <ChannelName href="https://hackclub.enterprise.slack.com/archives/C0266FRGV">
                   #lounge
                 </ChannelName>{' '}
-                - A channel for general discussion. Remember to follow the code
-                of conduct everywhere in the Slack.
+                - A channel for general discussion.{' '}
               </li>
-            </ul>
+            </ul>{' '}
+            Remember to follow the code of conduct everywhere in the Slack!
             <p>
               Want more information about Slack? Read the{' '}
               <ThemeLink href="https://readme.hackclub.com/slack">
@@ -643,14 +728,16 @@ const SlackPage = () => {
                     backgroundImage:
                       'radial-gradient(ellipse farthest-corner at bottom right, #ff8c37, #ec3750)'
                   }
-                  }}
-                  >                {geoLoading ? (
+                }}
+              >
+                {' '}
+                {geoLoading ? (
                   'Looking up…'
                 ) : (
                   <>
-                      Find your regional channel
+                    Find your regional channel
                     <br />
-                      (uses your browser timezone when available)
+                    (uses your browser timezone when available)
                   </>
                 )}
               </Text>
@@ -696,32 +783,19 @@ const SlackPage = () => {
             Changelog
           </Heading>
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <TimelineItem
-              version="v1.3.0"
-              date="March 16 2026"
-            >
+            <TimelineItem version="v1.3.0" date="March 16 2026">
               Country and US state channel suggestions based on your location
             </TimelineItem>
-            <TimelineItem
-              version="v1.2.0"
-              date="March 10 2026"
-            >
+            <TimelineItem version="v1.2.0" date="March 10 2026">
               <ThemeLink href="https://news.hackclub.com">
                 Slacker News
               </ThemeLink>{' '}
               and Prometheus launched
             </TimelineItem>
-            <TimelineItem
-              version="v1.1.0"
-              date="January 27 2026"
-            >
+            <TimelineItem version="v1.1.0" date="January 27 2026">
               slides added to onboarding flow
             </TimelineItem>
-            <TimelineItem
-              version="v1.0.0"
-              date="January 16 2026"
-              isLast
-            >
+            <TimelineItem version="v1.0.0" date="January 16 2026" isLast>
               slack.hackclub.com launched
             </TimelineItem>
           </Box>
